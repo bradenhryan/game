@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Snake - Nokia 3310</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #2c2c2c;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    font-family: 'Courier New', monospace;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  .phone {
+    background: linear-gradient(145deg, #3a4a5c, #2a3a4c);
+    border-radius: 30px 30px 40px 40px;
+    padding: 20px;
+    width: 340px;
+    box-shadow:
+      0 0 0 3px #1a2a3c,
+      0 10px 40px rgba(0,0,0,0.6),
+      inset 0 1px 0 rgba(255,255,255,0.1);
+    position: relative;
+  }
+
+  .phone-brand {
+    text-align: center;
+    color: #8a9aac;
+    font-size: 14px;
+    font-weight: bold;
+    letter-spacing: 4px;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+  }
+
+  .screen-bezel {
+    background: #1a1a2a;
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin-bottom: 20px;
+    box-shadow: inset 0 2px 8px rgba(0,0,0,0.5);
+  }
+
+  .screen-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+    color: #4a5a3a;
+    font-size: 10px;
+  }
+
+  .screen {
+    background: #9bab6c;
+    border-radius: 4px;
+    padding: 8px;
+    box-shadow: inset 0 1px 4px rgba(0,0,0,0.2);
+    position: relative;
+  }
+
+  .screen-inner {
+    background: #87a03e;
+    border-radius: 2px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  canvas {
+    display: block;
+    image-rendering: pixelated;
+    width: 100%;
+    height: auto;
+  }
+
+  .screen-footer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 6px;
+    color: #4a5a3a;
+    font-size: 10px;
+    font-weight: bold;
+  }
+
+  .controls {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .soft-keys {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    padding: 0 20px;
+  }
+
+  .soft-key {
+    background: linear-gradient(180deg, #4a5a6c, #3a4a5c);
+    border: 1px solid #2a3a4c;
+    border-radius: 6px;
+    color: #aabbcc;
+    font-size: 10px;
+    padding: 6px 16px;
+    cursor: pointer;
+    font-family: inherit;
+  }
+
+  .soft-key:active {
+    background: linear-gradient(180deg, #3a4a5c, #2a3a4c);
+  }
+
+  .dpad {
+    position: relative;
+    width: 140px;
+    height: 140px;
+    margin: 5px 0;
+  }
+
+  .dpad-center {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 36px;
+    height: 36px;
+    background: linear-gradient(145deg, #4a5a6c, #3a4a5c);
+    border-radius: 50%;
+    border: 1px solid #2a3a4c;
+    z-index: 2;
+    cursor: pointer;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+  }
+
+  .dpad-center:active {
+    background: linear-gradient(145deg, #3a4a5c, #2a3a4c);
+  }
+
+  .dpad-btn {
+    position: absolute;
+    background: linear-gradient(145deg, #4a5a6c, #3a4a5c);
+    border: 1px solid #2a3a4c;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #8a9aac;
+    font-size: 16px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+  }
+
+  .dpad-btn:active {
+    background: linear-gradient(145deg, #3a4a5c, #2a3a4c);
+  }
+
+  .dpad-up {
+    top: 0; left: 50%; transform: translateX(-50%);
+    width: 44px; height: 48px;
+    border-radius: 10px 10px 4px 4px;
+  }
+
+  .dpad-down {
+    bottom: 0; left: 50%; transform: translateX(-50%);
+    width: 44px; height: 48px;
+    border-radius: 4px 4px 10px 10px;
+  }
+
+  .dpad-left {
+    left: 0; top: 50%; transform: translateY(-50%);
+    width: 48px; height: 44px;
+    border-radius: 10px 4px 4px 10px;
+  }
+
+  .dpad-right {
+    right: 0; top: 50%; transform: translateY(-50%);
+    width: 48px; height: 44px;
+    border-radius: 4px 10px 10px 4px;
+  }
+
+  .numpad {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    padding: 0 25px;
+    margin-top: 5px;
+  }
+
+  .num-btn {
+    background: linear-gradient(180deg, #4a5a6c, #3a4a5c);
+    border: 1px solid #2a3a4c;
+    border-radius: 8px;
+    color: #aabbcc;
+    font-size: 14px;
+    font-family: inherit;
+    padding: 10px 0;
+    cursor: pointer;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    text-align: center;
+  }
+
+  .num-btn:active {
+    background: linear-gradient(180deg, #3a4a5c, #2a3a4c);
+  }
+
+  .num-btn span {
+    display: block;
+    font-size: 8px;
+    color: #6a7a8c;
+    margin-top: 1px;
+  }
+</style>
+</head>
+<body>
+
+<div class="phone">
+  <div class="phone-brand">NOKIA</div>
+
+  <div class="screen-bezel">
+    <div class="screen-header">
+      <span id="signal">|||.</span>
+      <span id="title">Snake II</span>
+      <span id="battery">[][=]</span>
+    </div>
+    <div class="screen">
+      <div class="screen-inner">
+        <canvas id="game" width="200" height="160"></canvas>
+      </div>
+    </div>
+    <div class="screen-footer">
+      <span id="left-label">Options</span>
+      <span id="right-label">Select</span>
+    </div>
+  </div>
+
+  <div class="controls">
+    <div class="soft-keys">
+      <button class="soft-key" id="btn-options">Options</button>
+      <button class="soft-key" id="btn-select">Select</button>
+    </div>
+
+    <div class="dpad">
+      <button class="dpad-btn dpad-up" id="btn-up">&#9650;</button>
+      <button class="dpad-btn dpad-down" id="btn-down">&#9660;</button>
+      <button class="dpad-btn dpad-left" id="btn-left">&#9664;</button>
+      <button class="dpad-btn dpad-right" id="btn-right">&#9654;</button>
+      <button class="dpad-center" id="btn-ok"></button>
+    </div>
+
+    <div class="numpad">
+      <button class="num-btn">1<span></span></button>
+      <button class="num-btn">2<span>abc</span></button>
+      <button class="num-btn">3<span>def</span></button>
+      <button class="num-btn">4<span>ghi</span></button>
+      <button class="num-btn">5<span>jkl</span></button>
+      <button class="num-btn">6<span>mno</span></button>
+      <button class="num-btn">7<span>pqrs</span></button>
+      <button class="num-btn">8<span>tuv</span></button>
+      <button class="num-btn">9<span>wxyz</span></button>
+      <button class="num-btn">*<span></span></button>
+      <button class="num-btn">0<span>+</span></button>
+      <button class="num-btn">#<span></span></button>
+    </div>
+  </div>
+</div>
+
+<script>
+const canvas = document.getElementById('game');
+const ctx = canvas.getContext('2d');
+
+// ---- Nokia Sound Engine (square wave beeps) ----
+let audioCtx = null;
+
+function ensureAudio() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+}
+
+function playTone(freq, duration, type = 'square', volume = 0.15) {
+  ensureAudio();
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.type = type;
+  osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+  gain.gain.setValueAtTime(volume, audioCtx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+  osc.start(audioCtx.currentTime);
+  osc.stop(audioCtx.currentTime + duration);
+}
+
+function sfxEat() {
+  playTone(600, 0.06);
+  setTimeout(() => playTone(900, 0.08), 50);
+}
+
+function sfxGameOver() {
+  playTone(400, 0.15, 'square', 0.12);
+  setTimeout(() => playTone(300, 0.15, 'square', 0.12), 120);
+  setTimeout(() => playTone(200, 0.3, 'square', 0.12), 240);
+}
+
+function sfxMenuMove() {
+  playTone(1200, 0.03, 'square', 0.08);
+}
+
+function sfxMenuSelect() {
+  playTone(800, 0.05);
+  setTimeout(() => playTone(1000, 0.05), 40);
+  setTimeout(() => playTone(1300, 0.07), 80);
+}
+
+function sfxTurn() {
+  playTone(1000, 0.02, 'square', 0.06);
+}
+
+// Nokia 3310 LCD colors
+const COLOR_BG = '#87a03e';
+const COLOR_DARK = '#2f3c14';
+const COLOR_MID = '#5a6e2a';
+
+const COLS = 25;
+const ROWS = 20;
+const CELL = canvas.width / COLS; // 8px cells
+
+let snake, direction, nextDirection, food, score, highScore, speed;
+let gameState = 'menu'; // menu, playing, paused, gameover
+let menuIndex = 0;
+let gameLoop = null;
+let wallMode = true; // walls kill you (Nokia default)
+
+const menuItems = ['New Game', 'High Score'];
+
+function init() {
+  highScore = parseInt(localStorage.getItem('nokia_snake_high') || '0');
+  drawMenu();
+}
+
+function startGame() {
+  const startX = Math.floor(COLS / 2);
+  const startY = Math.floor(ROWS / 2);
+  snake = [
+    { x: startX, y: startY },
+    { x: startX - 1, y: startY },
+    { x: startX - 2, y: startY },
+  ];
+  direction = { x: 1, y: 0 };
+  nextDirection = { x: 1, y: 0 };
+  score = 0;
+  speed = 150;
+  placeFood();
+  gameState = 'playing';
+  updateLabels();
+
+  if (gameLoop) clearInterval(gameLoop);
+  gameLoop = setInterval(tick, speed);
+}
+
+function placeFood() {
+  let pos;
+  do {
+    pos = {
+      x: Math.floor(Math.random() * COLS),
+      y: Math.floor(Math.random() * ROWS),
+    };
+  } while (snake.some(s => s.x === pos.x && s.y === pos.y));
+  food = pos;
+}
+
+function tick() {
+  if (gameState !== 'playing') return;
+
+  direction = { ...nextDirection };
+
+  const head = {
+    x: snake[0].x + direction.x,
+    y: snake[0].y + direction.y,
+  };
+
+  // Wall collision
+  if (wallMode) {
+    if (head.x < 0 || head.x >= COLS || head.y < 0 || head.y >= ROWS) {
+      gameOver();
+      return;
+    }
+  } else {
+    head.x = (head.x + COLS) % COLS;
+    head.y = (head.y + ROWS) % ROWS;
+  }
+
+  // Self collision
+  if (snake.some(s => s.x === head.x && s.y === head.y)) {
+    gameOver();
+    return;
+  }
+
+  snake.unshift(head);
+
+  if (head.x === food.x && head.y === food.y) {
+    score += 10;
+    sfxEat();
+    placeFood();
+    // Speed up slightly
+    if (speed > 70) {
+      speed -= 2;
+      clearInterval(gameLoop);
+      gameLoop = setInterval(tick, speed);
+    }
+  } else {
+    snake.pop();
+  }
+
+  draw();
+}
+
+function gameOver() {
+  sfxGameOver();
+  gameState = 'gameover';
+  if (score > highScore) {
+    highScore = score;
+    localStorage.setItem('nokia_snake_high', highScore);
+  }
+  clearInterval(gameLoop);
+  gameLoop = null;
+  drawGameOver();
+  updateLabels();
+}
+
+// ---- Drawing ----
+
+function clearScreen() {
+  ctx.fillStyle = COLOR_BG;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+}
+
+function drawPixelText(text, x, y, size) {
+  ctx.fillStyle = COLOR_DARK;
+  ctx.font = `bold ${size || 10}px Courier New`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(text, x, y);
+}
+
+function drawMenu() {
+  clearScreen();
+
+  // Title
+  ctx.fillStyle = COLOR_DARK;
+  ctx.font = 'bold 14px Courier New';
+  ctx.textAlign = 'center';
+  ctx.fillText('Snake II', canvas.width / 2, 30);
+
+  // Draw a small snake icon
+  for (let i = 0; i < 6; i++) {
+    ctx.fillStyle = COLOR_DARK;
+    ctx.fillRect(60 + i * 12, 50, 10, 10);
+  }
+  // Snake head
+  ctx.fillRect(60 + 6 * 12, 50, 10, 10);
+  ctx.fillStyle = COLOR_BG;
+  ctx.fillRect(60 + 6 * 12 + 6, 52, 2, 2);
+  ctx.fillRect(60 + 6 * 12 + 6, 56, 2, 2);
+
+  // Menu items
+  ctx.font = '11px Courier New';
+  menuItems.forEach((item, i) => {
+    const yPos = 90 + i * 22;
+    if (i === menuIndex) {
+      ctx.fillStyle = COLOR_DARK;
+      ctx.fillRect(30, yPos - 9, canvas.width - 60, 18);
+      ctx.fillStyle = COLOR_BG;
+    } else {
+      ctx.fillStyle = COLOR_DARK;
+    }
+    ctx.textAlign = 'center';
+    ctx.fillText(item, canvas.width / 2, yPos);
+  });
+
+  document.getElementById('left-label').textContent = '';
+  document.getElementById('right-label').textContent = 'Select';
+}
+
+function draw() {
+  clearScreen();
+
+  // Draw border/walls
+  if (wallMode) {
+    ctx.fillStyle = COLOR_DARK;
+    // Top and bottom
+    for (let x = 0; x < COLS; x++) {
+      drawBlock(x, 0, COLOR_MID);
+      drawBlock(x, ROWS - 1, COLOR_MID);
+    }
+    // Left and right
+    for (let y = 0; y < ROWS; y++) {
+      drawBlock(0, y, COLOR_MID);
+      drawBlock(COLS - 1, y, COLOR_MID);
+    }
+  }
+
+  // Draw food
+  ctx.fillStyle = COLOR_DARK;
+  ctx.fillRect(food.x * CELL + 1, food.y * CELL + 1, CELL - 2, CELL - 2);
+
+  // Draw snake
+  snake.forEach((segment, i) => {
+    if (i === 0) {
+      // Head - solid dark block
+      ctx.fillStyle = COLOR_DARK;
+      ctx.fillRect(segment.x * CELL, segment.y * CELL, CELL, CELL);
+    } else {
+      // Body - dark with tiny gap for grid feel
+      ctx.fillStyle = COLOR_DARK;
+      ctx.fillRect(segment.x * CELL + 0.5, segment.y * CELL + 0.5, CELL - 1, CELL - 1);
+    }
+  });
+
+  // Score display at top
+  ctx.fillStyle = COLOR_DARK;
+  ctx.font = 'bold 9px Courier New';
+  ctx.textAlign = 'left';
+  ctx.fillText('Score:' + score, 4, 9);
+}
+
+function drawBlock(x, y, color) {
+  ctx.fillStyle = color || COLOR_DARK;
+  ctx.fillRect(x * CELL, y * CELL, CELL, CELL);
+}
+
+function drawGameOver() {
+  clearScreen();
+
+  ctx.fillStyle = COLOR_DARK;
+  ctx.font = 'bold 14px Courier New';
+  ctx.textAlign = 'center';
+  ctx.fillText('GAME OVER', canvas.width / 2, 50);
+
+  ctx.font = '11px Courier New';
+  ctx.fillText('Score: ' + score, canvas.width / 2, 80);
+  ctx.fillText('Best: ' + highScore, canvas.width / 2, 100);
+
+  ctx.font = '9px Courier New';
+  ctx.fillText('Press OK to play again', canvas.width / 2, 135);
+}
+
+function drawPaused() {
+  // Overlay pause text
+  ctx.fillStyle = COLOR_BG;
+  ctx.fillRect(50, 60, 100, 30);
+  ctx.strokeStyle = COLOR_DARK;
+  ctx.lineWidth = 1;
+  ctx.strokeRect(50, 60, 100, 30);
+  ctx.fillStyle = COLOR_DARK;
+  ctx.font = 'bold 12px Courier New';
+  ctx.textAlign = 'center';
+  ctx.fillText('PAUSED', canvas.width / 2, 80);
+}
+
+function drawHighScore() {
+  clearScreen();
+  ctx.fillStyle = COLOR_DARK;
+  ctx.font = 'bold 12px Courier New';
+  ctx.textAlign = 'center';
+  ctx.fillText('High Score', canvas.width / 2, 50);
+  ctx.font = 'bold 20px Courier New';
+  ctx.fillText('' + highScore, canvas.width / 2, 90);
+  ctx.font = '9px Courier New';
+  ctx.fillText('Press Back to return', canvas.width / 2, 130);
+
+  document.getElementById('left-label').textContent = 'Back';
+  document.getElementById('right-label').textContent = '';
+}
+
+function updateLabels() {
+  if (gameState === 'playing') {
+    document.getElementById('left-label').textContent = 'Pause';
+    document.getElementById('right-label').textContent = '';
+  } else if (gameState === 'paused') {
+    document.getElementById('left-label').textContent = 'Resume';
+    document.getElementById('right-label').textContent = 'Quit';
+  } else if (gameState === 'gameover') {
+    document.getElementById('left-label').textContent = '';
+    document.getElementById('right-label').textContent = 'Menu';
+  }
+}
+
+// ---- Input ----
+
+function handleDirection(dx, dy) {
+  if (gameState === 'playing') {
+    // Prevent 180-degree turn
+    if (direction.x + dx !== 0 || direction.y + dy !== 0) {
+      sfxTurn();
+      nextDirection = { x: dx, y: dy };
+    }
+  } else if (gameState === 'menu') {
+    if (dy === -1 && menuIndex > 0) { menuIndex--; sfxMenuMove(); drawMenu(); }
+    if (dy === 1 && menuIndex < menuItems.length - 1) { menuIndex++; sfxMenuMove(); drawMenu(); }
+  }
+}
+
+function handleOk() {
+  ensureAudio();
+  if (gameState === 'menu') {
+    sfxMenuSelect();
+    if (menuIndex === 0) startGame();
+    else if (menuIndex === 1) { gameState = 'highscore'; drawHighScore(); }
+  } else if (gameState === 'gameover') {
+    sfxMenuSelect();
+    startGame();
+  }
+}
+
+function handleLeft() {
+  if (gameState === 'playing') {
+    gameState = 'paused';
+    clearInterval(gameLoop);
+    gameLoop = null;
+    drawPaused();
+    updateLabels();
+  } else if (gameState === 'paused') {
+    gameState = 'playing';
+    gameLoop = setInterval(tick, speed);
+    draw();
+    updateLabels();
+  } else if (gameState === 'highscore') {
+    gameState = 'menu';
+    drawMenu();
+  }
+}
+
+function handleRight() {
+  if (gameState === 'menu') {
+    handleOk();
+  } else if (gameState === 'paused') {
+    gameState = 'menu';
+    clearInterval(gameLoop);
+    gameLoop = null;
+    menuIndex = 0;
+    drawMenu();
+  } else if (gameState === 'gameover') {
+    gameState = 'menu';
+    menuIndex = 0;
+    drawMenu();
+  }
+}
+
+// Keyboard
+document.addEventListener('keydown', (e) => {
+  switch (e.key) {
+    case 'ArrowUp': case 'w': case 'W': e.preventDefault(); handleDirection(0, -1); break;
+    case 'ArrowDown': case 's': case 'S': e.preventDefault(); handleDirection(0, 1); break;
+    case 'ArrowLeft': case 'a': case 'A': e.preventDefault(); handleDirection(-1, 0); break;
+    case 'ArrowRight': case 'd': case 'D': e.preventDefault(); handleDirection(1, 0); break;
+    case 'Enter': case ' ': e.preventDefault(); handleOk(); break;
+    case 'q': handleLeft(); break;
+    case 'e': handleRight(); break;
+    case 'Escape':
+      if (gameState === 'playing') handleLeft();
+      else if (gameState === 'paused') handleRight();
+      break;
+  }
+});
+
+// D-pad buttons
+document.getElementById('btn-up').addEventListener('click', () => handleDirection(0, -1));
+document.getElementById('btn-down').addEventListener('click', () => handleDirection(0, 1));
+document.getElementById('btn-left').addEventListener('click', () => handleDirection(-1, 0));
+document.getElementById('btn-right').addEventListener('click', () => handleDirection(1, 0));
+document.getElementById('btn-ok').addEventListener('click', () => handleOk());
+document.getElementById('btn-options').addEventListener('click', () => handleLeft());
+document.getElementById('btn-select').addEventListener('click', () => handleRight());
+
+// Touch support for mobile - prevent scrolling on dpad
+document.querySelector('.dpad').addEventListener('touchmove', (e) => e.preventDefault(), { passive: false });
+
+// Start
+init();
+</script>
+
+</body>
+</html>

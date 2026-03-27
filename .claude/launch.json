@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "snake-game",
+      "runtimeExecutable": "ruby",
+      "runtimeArgs": ["/Users/bradenryan/Desktop/AI Work/Coding/Game/server.rb"],
+      "port": 3456
+    }
+  ]
+}
