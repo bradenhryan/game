@@ -359,6 +359,11 @@ function startReggaeMusic() {
 
   function scheduleLoop() {
     if (!musicPlaying) return;
+
+    // Clean up old nodes from previous loop
+    musicNodes.forEach(n => { try { n.disconnect(); } catch(e) {} });
+    musicNodes = [];
+
     const now = audioCtx.currentTime + 0.05;
 
     // === BASS LINE ===
@@ -467,12 +472,6 @@ function startReggaeMusic() {
         }
       }
     }
-
-    // Clean up old nodes
-    musicNodes = musicNodes.filter(n => {
-      try { n.disconnect(); } catch(e) {}
-      return false;
-    });
 
     musicTimer = setTimeout(scheduleLoop, loopLen * 1000 - 100);
   }
