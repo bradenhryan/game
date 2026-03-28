@@ -46,6 +46,14 @@
     padding: 12px 14px;
     margin-bottom: 20px;
     box-shadow: inset 0 2px 8px rgba(0,0,0,0.5);
+    transition: box-shadow 0.1s;
+  }
+
+  .screen-bezel.glow {
+    box-shadow:
+      inset 0 2px 8px rgba(0,0,0,0.5),
+      0 0 15px rgba(135, 160, 62, 0.4),
+      0 0 30px rgba(135, 160, 62, 0.2);
   }
 
   .screen-header {
@@ -72,11 +80,46 @@
     overflow: hidden;
   }
 
+  /* LCD Scanlines overlay */
+  .screen-inner::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0, 0, 0, 0.06) 2px,
+      rgba(0, 0, 0, 0.06) 4px
+    );
+    pointer-events: none;
+    z-index: 2;
+  }
+
   canvas {
     display: block;
     image-rendering: pixelated;
     width: 100%;
     height: auto;
+  }
+
+  /* Screen shake animation */
+  @keyframes screenShake {
+    0% { transform: translate(0, 0); }
+    10% { transform: translate(-3px, 2px); }
+    20% { transform: translate(3px, -2px); }
+    30% { transform: translate(-2px, 3px); }
+    40% { transform: translate(2px, -1px); }
+    50% { transform: translate(-1px, 2px); }
+    60% { transform: translate(2px, -2px); }
+    70% { transform: translate(-1px, 1px); }
+    80% { transform: translate(1px, -1px); }
+    90% { transform: translate(-1px, 0); }
+    100% { transform: translate(0, 0); }
+  }
+
+  .shake {
+    animation: screenShake 0.4s ease-out;
   }
 
   .screen-footer {
@@ -496,16 +539,126 @@ const ROWS = 20;
 const CELL = canvas.width / COLS; // 8px cells
 
 let snake, direction, nextDirection, food, score, highScore, speed;
-let gameState = 'menu'; // menu, playing, paused, gameover
+let gameState = 'boot'; // boot, menu, playing, paused, gameover
 let menuIndex = 0;
 let gameLoop = null;
 let wallMode = true; // walls kill you (Nokia default)
+let foodBlink = true;
+let foodBlinkTimer = null;
+let scorePopups = []; // floating +10 popups
 
 const menuItems = ['New Game', 'High Score'];
 
+// ---- Nokia Boot Sequence ----
+function sfxBoot() {
+  ensureAudio();
+  // Classic Nokia-style ascending startup jingle
+  const notes = [
+    { f: 523.25, t: 0, d: 0.12 },     // C5
+    { f: 659.25, t: 0.13, d: 0.12 },   // E5
+    { f: 783.99, t: 0.26, d: 0.12 },   // G5
+    { f: 1046.5, t: 0.39, d: 0.25 },   // C6
+    { f: 783.99, t: 0.55, d: 0.1 },    // G5
+    { f: 1046.5, t: 0.66, d: 0.35 },   // C6
+  ];
+  notes.forEach(({ f, t, d }) => {
+    setTimeout(() => playTone(f, d, 'square', 0.12), t * 1000);
+  });
+}
+
+function playBootSequence() {
+  gameState = 'boot';
+  clearScreen();
+
+  // Phase 1: Black screen
+  ctx.fillStyle = COLOR_DARK;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Phase 2: NOKIA text fades in
+  setTimeout(() => {
+    ctx.fillStyle = COLOR_DARK;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = COLOR_BG;
+    ctx.font = 'bold 28px Courier New';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('NOKIA', canvas.width / 2, canvas.height / 2 - 10);
+    ctx.font = '9px Courier New';
+    ctx.fillText('CONNECTING PEOPLE', canvas.width / 2, canvas.height / 2 + 16);
+
+    // Add screen glow during boot
+    document.querySelector('.screen-bezel').classList.add('glow');
+  }, 400);
+
+  // Play startup sound
+  setTimeout(() => sfxBoot(), 500);
+
+  // Phase 3: Transition to menu
+  setTimeout(() => {
+    document.querySelector('.screen-bezel').classList.remove('glow');
+    gameState = 'menu';
+    drawMenu();
+  }, 2200);
+}
+
+// ---- Screen Shake ----
+function triggerShake() {
+  const screenInner = document.querySelector('.screen-inner');
+  screenInner.classList.remove('shake');
+  // Force reflow to restart animation
+  void screenInner.offsetWidth;
+  screenInner.classList.add('shake');
+  setTimeout(() => screenInner.classList.remove('shake'), 400);
+}
+
+// ---- Food Blinking ----
+function startFoodBlink() {
+  if (foodBlinkTimer) clearInterval(foodBlinkTimer);
+  foodBlink = true;
+  foodBlinkTimer = setInterval(() => {
+    foodBlink = !foodBlink;
+  }, 300);
+}
+
+function stopFoodBlink() {
+  if (foodBlinkTimer) { clearInterval(foodBlinkTimer); foodBlinkTimer = null; }
+  foodBlink = true;
+}
+
+// ---- Score Popups ----
+function addScorePopup(x, y, text) {
+  scorePopups.push({
+    x: x * CELL + CELL / 2,
+    y: y * CELL,
+    text: text,
+    opacity: 1.0,
+    life: 1.0,
+  });
+}
+
+function updateScorePopups() {
+  scorePopups.forEach(p => {
+    p.y -= 0.8;
+    p.life -= 0.03;
+    p.opacity = Math.max(0, p.life);
+  });
+  scorePopups = scorePopups.filter(p => p.life > 0);
+}
+
+function drawScorePopups() {
+  scorePopups.forEach(p => {
+    ctx.globalAlpha = p.opacity;
+    ctx.fillStyle = COLOR_DARK;
+    ctx.font = 'bold 8px Courier New';
+    ctx.textAlign = 'center';
+    ctx.fillText(p.text, p.x, p.y);
+    ctx.globalAlpha = 1.0;
+  });
+}
+
 function init() {
   highScore = parseInt(localStorage.getItem('nokia_snake_high') || '0');
-  drawMenu();
+  playBootSequence();
 }
 
 function startGame() {
@@ -524,9 +677,15 @@ function startGame() {
   gameState = 'playing';
   updateLabels();
 
+  scorePopups = [];
+  startFoodBlink();
+
   if (gameLoop) clearInterval(gameLoop);
   gameLoop = setInterval(tick, speed);
   startReggaeMusic();
+
+  // Screen glow while playing
+  document.querySelector('.screen-bezel').classList.add('glow');
 }
 
 function placeFood() {
@@ -572,6 +731,7 @@ function tick() {
   if (head.x === food.x && head.y === food.y) {
     score += 10;
     sfxEat();
+    addScorePopup(food.x, food.y, '+10');
     placeFood();
     // Speed up slightly
     if (speed > 70) {
@@ -588,7 +748,9 @@ function tick() {
 
 function gameOver() {
   stopReggaeMusic();
+  stopFoodBlink();
   sfxGameOver();
+  triggerShake();
   gameState = 'gameover';
   if (score > highScore) {
     highScore = score;
@@ -596,7 +758,21 @@ function gameOver() {
   }
   clearInterval(gameLoop);
   gameLoop = null;
-  drawGameOver();
+  scorePopups = [];
+
+  // Flash the screen before showing game over
+  ctx.fillStyle = COLOR_DARK;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  setTimeout(() => {
+    clearScreen();
+    ctx.fillStyle = COLOR_DARK;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    setTimeout(() => {
+      drawGameOver();
+      document.querySelector('.screen-bezel').classList.remove('glow');
+    }, 80);
+  }, 80);
+
   updateLabels();
 }
 
@@ -672,9 +848,15 @@ function draw() {
     }
   }
 
-  // Draw food
-  ctx.fillStyle = COLOR_DARK;
-  ctx.fillRect(food.x * CELL + 1, food.y * CELL + 1, CELL - 2, CELL - 2);
+  // Draw food (blinking)
+  if (foodBlink) {
+    ctx.fillStyle = COLOR_DARK;
+    ctx.fillRect(food.x * CELL + 1, food.y * CELL + 1, CELL - 2, CELL - 2);
+  } else {
+    // Draw a smaller dot when "off" phase of blink
+    ctx.fillStyle = COLOR_MID;
+    ctx.fillRect(food.x * CELL + 2, food.y * CELL + 2, CELL - 4, CELL - 4);
+  }
 
   // Draw snake
   snake.forEach((segment, i) => {
@@ -688,6 +870,10 @@ function draw() {
       ctx.fillRect(segment.x * CELL + 0.5, segment.y * CELL + 0.5, CELL - 1, CELL - 1);
     }
   });
+
+  // Update and draw score popups
+  updateScorePopups();
+  drawScorePopups();
 
   // Score display at top
   ctx.fillStyle = COLOR_DARK;
@@ -791,12 +977,14 @@ function handleLeft() {
     clearInterval(gameLoop);
     gameLoop = null;
     stopReggaeMusic();
+    stopFoodBlink();
     drawPaused();
     updateLabels();
   } else if (gameState === 'paused') {
     gameState = 'playing';
     gameLoop = setInterval(tick, speed);
     startReggaeMusic();
+    startFoodBlink();
     draw();
     updateLabels();
   } else if (gameState === 'highscore') {
@@ -813,6 +1001,8 @@ function handleRight() {
     clearInterval(gameLoop);
     gameLoop = null;
     stopReggaeMusic();
+    stopFoodBlink();
+    document.querySelector('.screen-bezel').classList.remove('glow');
     menuIndex = 0;
     drawMenu();
   } else if (gameState === 'gameover') {
