@@ -321,6 +321,172 @@ function sfxTurn() {
   playTone(1000, 0.02, 'square', 0.06);
 }
 
+// ---- Reggae Background Music Engine ----
+let musicPlaying = false;
+let musicNodes = [];
+let musicTimer = null;
+
+function startReggaeMusic() {
+  if (musicPlaying) return;
+  ensureAudio();
+  musicPlaying = true;
+
+  const bpm = 140;
+  const beatLen = 60 / bpm;
+  const barLen = beatLen * 4;
+
+  // Reggae bass line pattern (root notes in a I-IV-V-I progression)
+  const bassPattern = [
+    // Bar 1 - i (Am)
+    { note: 110, time: 0, dur: 0.3 },
+    { note: 110, time: beatLen * 2, dur: 0.15 },
+    { note: 130.81, time: beatLen * 2.75, dur: 0.15 },
+    // Bar 2 - iv (Dm)
+    { note: 146.83, time: barLen, dur: 0.3 },
+    { note: 146.83, time: barLen + beatLen * 2, dur: 0.15 },
+    { note: 164.81, time: barLen + beatLen * 2.75, dur: 0.15 },
+    // Bar 3 - v (Em)
+    { note: 164.81, time: barLen * 2, dur: 0.3 },
+    { note: 164.81, time: barLen * 2 + beatLen * 2, dur: 0.15 },
+    { note: 146.83, time: barLen * 2 + beatLen * 2.75, dur: 0.15 },
+    // Bar 4 - i (Am)
+    { note: 110, time: barLen * 3, dur: 0.3 },
+    { note: 130.81, time: barLen * 3 + beatLen * 2, dur: 0.2 },
+    { note: 110, time: barLen * 3 + beatLen * 3, dur: 0.2 },
+  ];
+
+  const loopLen = barLen * 4;
+
+  function scheduleLoop() {
+    if (!musicPlaying) return;
+    const now = audioCtx.currentTime + 0.05;
+
+    // === BASS LINE ===
+    bassPattern.forEach(({ note, time, dur }) => {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(note, now + time);
+      gain.gain.setValueAtTime(0.18, now + time);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + time + dur);
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      osc.start(now + time);
+      osc.stop(now + time + dur + 0.01);
+      musicNodes.push(osc);
+    });
+
+    // === OFFBEAT SKANK (the reggae chop) ===
+    for (let bar = 0; bar < 4; bar++) {
+      for (let beat = 0; beat < 4; beat++) {
+        // Classic reggae: hit on the "and" of each beat (offbeat)
+        const t = now + bar * barLen + beat * beatLen + beatLen * 0.5;
+        const chordFreqs = bar < 1 ? [220, 277.18, 329.63] :
+                           bar < 2 ? [293.66, 349.23, 440] :
+                           bar < 3 ? [329.63, 392, 493.88] :
+                                     [220, 277.18, 329.63];
+        chordFreqs.forEach(freq => {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'square';
+          osc.frequency.setValueAtTime(freq, t);
+          gain.gain.setValueAtTime(0.04, t);
+          gain.gain.exponentialRampToValueAtTime(0.001, t + 0.08);
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start(t);
+          osc.stop(t + 0.1);
+          musicNodes.push(osc);
+        });
+      }
+    }
+
+    // === DRUMS (kick + rimshot) ===
+    for (let bar = 0; bar < 4; bar++) {
+      for (let beat = 0; beat < 4; beat++) {
+        const t = now + bar * barLen + beat * beatLen;
+
+        // Kick on beats 1 and 3
+        if (beat === 0 || beat === 2) {
+          const kickOsc = audioCtx.createOscillator();
+          const kickGain = audioCtx.createGain();
+          kickOsc.type = 'sine';
+          kickOsc.frequency.setValueAtTime(150, t);
+          kickOsc.frequency.exponentialRampToValueAtTime(40, t + 0.12);
+          kickGain.gain.setValueAtTime(0.25, t);
+          kickGain.gain.exponentialRampToValueAtTime(0.001, t + 0.15);
+          kickOsc.connect(kickGain);
+          kickGain.connect(audioCtx.destination);
+          kickOsc.start(t);
+          kickOsc.stop(t + 0.16);
+          musicNodes.push(kickOsc);
+        }
+
+        // Hi-hat on every beat and offbeat
+        for (let sub = 0; sub < 2; sub++) {
+          const ht = t + sub * beatLen * 0.5;
+          const bufSize = audioCtx.sampleRate * 0.03;
+          const buf = audioCtx.createBuffer(1, bufSize, audioCtx.sampleRate);
+          const data = buf.getChannelData(0);
+          for (let i = 0; i < bufSize; i++) data[i] = Math.random() * 2 - 1;
+          const noise = audioCtx.createBufferSource();
+          noise.buffer = buf;
+          const hihatGain = audioCtx.createGain();
+          const hihatFilter = audioCtx.createBiquadFilter();
+          hihatFilter.type = 'highpass';
+          hihatFilter.frequency.setValueAtTime(8000, ht);
+          hihatGain.gain.setValueAtTime(sub === 0 ? 0.07 : 0.04, ht);
+          hihatGain.gain.exponentialRampToValueAtTime(0.001, ht + 0.03);
+          noise.connect(hihatFilter);
+          hihatFilter.connect(hihatGain);
+          hihatGain.connect(audioCtx.destination);
+          noise.start(ht);
+          noise.stop(ht + 0.04);
+          musicNodes.push(noise);
+        }
+
+        // Snare/rim on beats 2 and 4 (one drop feel)
+        if (beat === 1 || beat === 3) {
+          const snareBuf = audioCtx.createBuffer(1, audioCtx.sampleRate * 0.08, audioCtx.sampleRate);
+          const snareData = snareBuf.getChannelData(0);
+          for (let i = 0; i < snareData.length; i++) snareData[i] = Math.random() * 2 - 1;
+          const snareNoise = audioCtx.createBufferSource();
+          snareNoise.buffer = snareBuf;
+          const snareGain = audioCtx.createGain();
+          const snareFilter = audioCtx.createBiquadFilter();
+          snareFilter.type = 'bandpass';
+          snareFilter.frequency.setValueAtTime(3000, t);
+          snareGain.gain.setValueAtTime(0.12, t);
+          snareGain.gain.exponentialRampToValueAtTime(0.001, t + 0.08);
+          snareNoise.connect(snareFilter);
+          snareFilter.connect(snareGain);
+          snareGain.connect(audioCtx.destination);
+          snareNoise.start(t);
+          snareNoise.stop(t + 0.1);
+          musicNodes.push(snareNoise);
+        }
+      }
+    }
+
+    // Clean up old nodes
+    musicNodes = musicNodes.filter(n => {
+      try { n.disconnect(); } catch(e) {}
+      return false;
+    });
+
+    musicTimer = setTimeout(scheduleLoop, loopLen * 1000 - 100);
+  }
+
+  scheduleLoop();
+}
+
+function stopReggaeMusic() {
+  musicPlaying = false;
+  if (musicTimer) { clearTimeout(musicTimer); musicTimer = null; }
+  musicNodes.forEach(n => { try { n.stop(); n.disconnect(); } catch(e) {} });
+  musicNodes = [];
+}
+
 // Nokia 3310 LCD colors
 const COLOR_BG = '#87a03e';
 const COLOR_DARK = '#2f3c14';
@@ -361,6 +527,7 @@ function startGame() {
 
   if (gameLoop) clearInterval(gameLoop);
   gameLoop = setInterval(tick, speed);
+  startReggaeMusic();
 }
 
 function placeFood() {
@@ -421,6 +588,7 @@ function tick() {
 }
 
 function gameOver() {
+  stopReggaeMusic();
   sfxGameOver();
   gameState = 'gameover';
   if (score > highScore) {
@@ -623,11 +791,13 @@ function handleLeft() {
     gameState = 'paused';
     clearInterval(gameLoop);
     gameLoop = null;
+    stopReggaeMusic();
     drawPaused();
     updateLabels();
   } else if (gameState === 'paused') {
     gameState = 'playing';
     gameLoop = setInterval(tick, speed);
+    startReggaeMusic();
     draw();
     updateLabels();
   } else if (gameState === 'highscore') {
@@ -643,6 +813,7 @@ function handleRight() {
     gameState = 'menu';
     clearInterval(gameLoop);
     gameLoop = null;
+    stopReggaeMusic();
     menuIndex = 0;
     drawMenu();
   } else if (gameState === 'gameover') {
