@@ -49,12 +49,11 @@ each scheduled run can:
 4. **Monthly — roster refresh**: re-scan the trades for layoffs/wind-downs/M&A at western
    lenders and add fresh names to the roster with a "disruption" flag.
 
-Two notes from looking at what's connected today: your **Gmail and Calendar here are the
+One note from looking at what's connected today: your **Gmail and Calendar here are the
 personal account** (bradenhryan@gmail.com) — I can see dinner with the Newmans, not your team
 1:1s. Connecting your Genesis account (or just sharing the team calendar / forwarding scorecards
-to a label I can read) is what unlocks #1-3 fully. And you're **traveling June 14-19** — a good
-forcing function: stand up §1 and §2 the week of June 22 so the team runs the Friday-scorecard
-week once while you watch, not while you're on a boat.
+to a label I can read) is what unlocks #1-3 fully. Timeline: send the scorecard email this week,
+first scorecards due Friday June 19, first one-sheet Monday meeting June 22.
 
 ## 5. CRM hygiene (the unsexy one that matters at $200M)
 

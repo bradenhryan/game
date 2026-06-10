@@ -176,7 +176,7 @@ pre-clear the box so you can move from handshake to paper in 48 hours.
    scorecard flip alone recovers ~6 hours/week, which is exactly the time recruiting requires.
    The two halves of this plan fund each other.
 
-## This week (June 10-13, before your trip)
+## This week (June 10-13)
 - [ ] Confirm the $200M date assumption (top of this file) — it changes the hiring curve.
 - [ ] **Pacific Private Money (Novato) lost its CA license in April — its originators are
       fielding offers right now.** 30 minutes on LinkedIn to pull their originator roster, then
@@ -186,7 +186,7 @@ pre-clear the box so you can move from handshake to paper in 48 hours.
       who Lima One's best (and most restless) western AEs are.
 - [ ] Ask leadership for: comp pre-approval for 4 hires + ops-scaling confirmation (Part 3 #1).
 - [ ] Send the team the Friday-scorecard email (template at top of the automation playbook) —
-      effective the week of June 22, after you're back.
+      first scorecards due Friday, June 19; first one-sheet Monday meeting June 22.
 - [ ] Buy LinkedIn Recruiter Lite; first 10 connection requests from the roster's A-list.
 - [ ] 6/19: Scott Steiner powwow — same conversation as Josh.
 
