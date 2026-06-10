@@ -2,11 +2,9 @@
 
 Prepared June 10, 2026 · Team of 7 · Current run-rate $75M/mo (~$10.7M/originator)
 
-> **One assumption you need to confirm:** your note said $100M/mo by end of 2026 *and* $200M/mo
-> by end of 2026. I've assumed the second was a typo for **end of 2027**. If you genuinely mean
-> $200M/mo in six months, that is not a productivity-and-recruiting plan — it's an acquisition
-> or a bulk lift-out of an entire competitor team, and the plan below changes shape. Everything
-> that follows assumes: **$100M by Dec 2026, $200M by Dec 2027.**
+> **Confirmed June 10, 2026:** targets are **$100M/mo by Dec 2026 and $200M/mo by Dec 2027**.
+> Capital capacity is confirmed by leadership; the scaling constraint to manage is **ops**
+> (see Part 3, #1 — get the ops-headcount trigger schedule in writing).
 
 ## The math (why this plan has exactly two engines)
 
@@ -140,23 +138,41 @@ pre-clear the box so you can move from handshake to paper in 48 hours.
 
 ## Part 3 — Things I'd do in your shoes (the case for each)
 
-1. **Confirm ops and capital can absorb $200M before you hire anyone.** Originators sell
-   certainty and speed. If underwriting, draws, and capital capacity are sized for $75M, every
-   hire degrades service for all of them, your repeat rate falls, and your new recruits quit —
-   the failure mode of nearly every fast-scaling lender. Ask leadership for explicit confirmation
-   that processing/UW/draw-admin headcount scales on a trigger schedule tied to volume
-   ($100M → +X processors, etc.). Get it in the same meeting where you get comp pre-approval.
-2. **Promote a player-coach at ~10 originators.** You cannot run 15 directly plus recruit. Pick
+1. **Capital is confirmed — so ops is the whole conversation.** Originators sell certainty and
+   speed. If underwriting, draws, and processing are sized for $75M, every hire degrades service
+   for all of them, your repeat rate falls, and your new recruits quit — the failure mode of
+   nearly every fast-scaling lender. Ask leadership for an explicit **ops-headcount trigger
+   schedule tied to volume** ($100M → +X processors/UW/draw-admin, $150M → +Y), in writing, in
+   the same meeting where you get comp pre-approval for the next 4 hires.
+2. **Pay your 7 to recruit: internal referral bounty.** Your originators collectively know every
+   AE in the West — they compete against them daily. A $10-15K bounty per signed-and-ramped hire
+   is the cheapest sourcing channel that exists (a recruiter would cost 20-25% of first-year
+   comp, $25-50K+). It also makes the team co-owners of the growth goal instead of spectators
+   worried about sharing the pie.
+3. **Pre-approve 2-3 ramp packages before the first serious call.** The #1 reason a producing
+   originator won't move is the 90-180-day income gap while their book transitions. Standard
+   market solve: a production guarantee or forgivable draw for the first 3-6 months. Get
+   leadership to pre-approve the structure now — when a real candidate says yes, you want paper
+   in 48 hours, not a three-week approval safari that lets their boss counter.
+4. **Run stay interviews with your 7 this month — before the market hears you're hiring.** The
+   moment you start recruiting loudly, every competitor assumes your people are gettable and
+   calls them. One honest hour each ("what would make you leave; what would make the next two
+   years your best") plus fixing one named irritant per person is the cheapest insurance
+   against losing $10M/mo of production mid-push. Losing one of the 7 erases a quarter of
+   recruiting gains.
+5. **Build your proof kit before outreach starts.** The recruiting pitch that wins in 2026 is
+   production enablement, and claims need receipts: pull Genesis' real numbers for avg
+   term-sheet time, avg days-to-close, draw turnaround, and your team's repeat rate. One slide.
+   Every interview, same slide. (It doubles as your ops-SLA baseline for #1.)
+6. **Promote a player-coach at ~10 originators.** You cannot run 15 directly plus recruit. Pick
    the successor now and start giving them pod-lead reps. The org chart is part of the plan.
-3. **Book the fall conferences now.** AAPL Annual (Las Vegas, Nov) and the IMN/NPLA fall events
-   are where western RTL originators stand in one room wearing name tags. Budget for a dinner —
-   eight targets at one table beats eighty InMails. (Dates/details in the roster file.)
-4. **Mine your own borrowers and brokers for recruiting intel.** Your team talks to the market
-   daily. Standing question in the Monday meeting: "which competing originator impressed someone
-   this week?" That name goes in the tracker as Warm — borrower-sourced intel beats any list.
-5. **Defensive retention move now, not after the first resignation:** see Monthly #5. You're
-   about to heat up the talent market in your own backyard.
-6. **Run the management automation** in `management/automation-playbook.md` — the Friday
+7. **Book the fall conferences now.** AAPL Annual (Las Vegas, Nov 9-10) and NPLA Scottsdale
+   (Oct 25-27) are where western RTL originators stand in one room wearing name tags. Budget
+   for a dinner — eight targets at one table beats eighty InMails.
+8. **Mine your own borrowers and brokers for recruiting intel.** Standing question in the
+   Monday meeting: "which competing originator impressed someone this week?" That name goes in
+   the tracker as Warm — borrower-sourced intel beats any list.
+9. **Run the management automation** in `management/automation-playbook.md` — the Friday
    scorecard flip alone recovers ~6 hours/week, which is exactly the time recruiting requires.
    The two halves of this plan fund each other.
 
