@@ -99,8 +99,13 @@ Market context for all four levers — and the firm-wide stats to use in recruit
 
 The full system lives in three files; here is the operating rhythm:
 
-- **`roster/`** — the named-target list: western RTL/private-money lenders, who to pull from
-  each, named individuals from public rankings/press, and the 2026 conference calendar.
+- **`roster/`** — 67 western/national lenders tiered A/B/C (`company-roster.csv`: Tier A =
+  disruption windows — Pacific Private Money's license revocation, Socotra's Ponzi-case stress,
+  Upright's distress, Lima One's churn, PE-integration shops), ~33 named individuals
+  (`named-targets.csv`: producer targets incl. the West's #2-ranked originator, referral nodes,
+  and the competitor execs to track), and the 2026 conference/community map
+  (`watering-holes.md` — AAPL Las Vegas Nov 9-10 and NPLA Scottsdale Oct 25-27 are the two to
+  book today).
 - **`outreach/linkedin-outreach-kit.md`** — daily 20-minute cadence, 9 message templates
   (cold, warm, post-accept, breakup, disruption, conference), the 30-second Genesis pitch, and
   legal guardrails (non-solicits, no-document rule). Also my candid case for why I built you a
@@ -157,7 +162,12 @@ pre-clear the box so you can move from handshake to paper in 48 hours.
 
 ## This week (June 10-13, before your trip)
 - [ ] Confirm the $200M date assumption (top of this file) — it changes the hiring curve.
-- [ ] Friday: MM catch-up with Josh Woodward — float the "what would it take" question.
+- [ ] **Pacific Private Money (Novato) lost its CA license in April — its originators are
+      fielding offers right now.** 30 minutes on LinkedIn to pull their originator roster, then
+      Template H to each. This window closes in weeks, not months. (Vet for distance from the
+      fraud probes; recruit producers, not principals.)
+- [ ] Friday: MM catch-up with Josh Woodward — float the "what would it take" question, and ask
+      who Lima One's best (and most restless) western AEs are.
 - [ ] Ask leadership for: comp pre-approval for 4 hires + ops-scaling confirmation (Part 3 #1).
 - [ ] Send the team the Friday-scorecard email (template at top of the automation playbook) —
       effective the week of June 22, after you're back.
