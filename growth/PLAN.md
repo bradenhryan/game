@@ -42,8 +42,11 @@ Prepared June 10, 2026 · Team of 7 · Current run-rate $75M/mo (~$10.7M/origina
    certainty-of-close is your pitch to borrowers and recruits alike. Track the % on the
    scorecard — what gets measured gets fast.
 3. **Five past-borrower touches per originator per day.** Repeat borrowers are the highest-ROI
-   dollar in this business (top RTL shops run 50-70% repeat share). A flipper who closed with
-   you 6-9 months ago is about to buy again — with you or with whoever called.
+   dollar in this business — **Kiavi runs 84% repeat-transaction share**, and Genesis' own
+   sponsor-based model (269 new sponsors in 2025) is built for it. A flipper who closed with
+   you 6-9 months ago is about to buy again — with you or with whoever called. The single
+   highest-value trigger: **automatic outreach at project payoff**, the exact moment they need
+   the next loan.
 4. **Your office hours 4-5pm** replace all-day "got a sec" interruptions (details in
    `management/automation-playbook.md`).
 
@@ -82,10 +85,13 @@ Prepared June 10, 2026 · Team of 7 · Current run-rate $75M/mo (~$10.7M/origina
 ### The four quarter-by-quarter productivity bets (Engine 1, ~$9M)
 | Lever | Est. lift | Owner action |
 |---|---|---|
-| Repeat-borrower machine (daily touches + monthly audit) | +$4-5M/mo | Originators daily; you audit monthly |
+| Repeat-borrower machine (daily touches + payoff-trigger outreach + monthly audit) | +$4-5M/mo | Originators daily; you audit monthly |
 | Term-sheet speed SLA + lost-deal fixes taken to credit/ops | +$2M/mo | You, with data from autopsies |
-| Broker channel pruning + top-tier service | +$2M/mo | Originators weekly; you monthly |
-| Next-loan capture (construction, DSCR takeout) | +$1-2M/mo | Train once, track on scorecard |
+| Plug into Genesis' new Wholesale/Correspondent channels (launched 2025) + broker pruning | +$2M/mo | You negotiate team's access; originators work it weekly |
+| Next-loan capture (ground-up after the flip, DSCR takeout at exit — the two hottest 2026 segments) | +$1-2M/mo | Train once, track on scorecard |
+
+Market context for all four levers — and the firm-wide stats to use in recruiting calls
+(Genesis record $4.8B in 2025, +33%; your team ≈ 19% of the firm) — is in `market-intel.md`.
 
 ---
 
@@ -105,6 +111,15 @@ The full system lives in three files; here is the operating rhythm:
   Scott Steiner at Lima One (it was on your calendar). Lima One has been through years of
   ownership turbulence — those two conversations, this week and next, are the cheapest pipeline
   you will ever have. Start there, not with cold LinkedIn.
+
+**Read the room before you pitch:** 2026 is a growth phase, not a distress phase — Anchor
+(+117%), Kiavi (+20%), CV3 (~$2B) are all healthy, so you're out-pitching strong platforms, not
+catching falling knives. Published data says originators switch for **production enablement**
+(turn-times, ops, product width, capital certainty), not bps — comp gets them to the table,
+enablement signs them. The one genuinely soft spot in the West's talent market is **Lima One**,
+which restructured through 2024-25 and is now re-expanding — mid-tenure AEs who lived through
+the churn are the receptive profile, and your two standing contacts there are exactly that
+conversation. Full intel in `market-intel.md`.
 
 **Recruiting targets by quarter:** Q3 2026: 2 signed (start by Sept 1). Q4 2026: 2 more signed.
 2027: 6-8 more, one per ~6 weeks. Prioritize: (1) lift-out pairs — two originators who work
